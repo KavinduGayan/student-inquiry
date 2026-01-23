@@ -4,8 +4,8 @@ import com.dimiya.studentinquiry.domain.inquiry.dto.LecturerInquiryViewResponse;
 import com.dimiya.studentinquiry.domain.inquiry.entity.InquiryItem;
 import com.dimiya.studentinquiry.domain.inquiry.service.InquiryService;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,10 +20,13 @@ public class LecturerInquiryController {
     }
 
     @GetMapping("/{lecturerId}/inquiries")
-    public ResponseEntity<List<LecturerInquiryViewResponse>> getLecturerInquiries(@PathVariable Long lecturerId) {
-        List<InquiryItem> items = inquiryService.getLecturerInquiries(lecturerId);
+    public ResponseEntity<Page<LecturerInquiryViewResponse>> getLecturerInquiries(
+            @PathVariable Long lecturerId,
+            Pageable pageable
+    ) {
+        Page<InquiryItem> items = inquiryService.getLecturerInquiries(lecturerId, pageable);
 
-        List<LecturerInquiryViewResponse> response = items.stream().map(ii -> {
+        Page<LecturerInquiryViewResponse> response = items.map(ii -> {
             LecturerInquiryViewResponse r = new LecturerInquiryViewResponse();
             r.setInquiryItemId(ii.getId());
             r.setStudentName(ii.getInquiry().getStudent().getName());
@@ -31,8 +34,9 @@ public class LecturerInquiryController {
             r.setInquiredAt(ii.getInquiredAt());
             r.setStatus(ii.getStatus() != null ? ii.getStatus().name() : null);
             return r;
-        }).toList();
-
+        });
         return ResponseEntity.ok(response);
     }
+
+
 }
