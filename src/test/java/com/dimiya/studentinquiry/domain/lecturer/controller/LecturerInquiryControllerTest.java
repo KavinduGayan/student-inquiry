@@ -77,12 +77,14 @@ class LecturerInquiryControllerTest {
                 .status(InquiryStatus.OPEN)
                 .build());
 
-        mockMvc.perform(get("/api/v1/lecturers/{id}/inquiries", lecturer.getId()))
+        mockMvc.perform(get("/api/v1/lecturers/{id}/inquiries", lecturer.getId())
+                        .param("page", "0")
+                        .param("size", "10"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].inquiryItemId").value(item.getId()))
-                .andExpect(jsonPath("$[0].studentName").value("Alice"))
-                .andExpect(jsonPath("$[0].courseName").value("Biology"))
-                .andExpect(jsonPath("$[0].inquiredAt").value("2024-01-02T11:22:33"))
-                .andExpect(jsonPath("$[0].status").value("OPEN"));
+                .andExpect(jsonPath("$.content[0].inquiryItemId").value(item.getId()))
+                .andExpect(jsonPath("$.content[0].studentName").value("Alice"))
+                .andExpect(jsonPath("$.content[0].courseName").value("Biology"))
+                .andExpect(jsonPath("$.content[0].inquiredAt").value("2024-01-02T11:22:33"))
+                .andExpect(jsonPath("$.content[0].status").value("OPEN"));
     }
 }
