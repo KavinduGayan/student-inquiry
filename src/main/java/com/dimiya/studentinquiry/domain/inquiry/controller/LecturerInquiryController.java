@@ -3,7 +3,9 @@ package com.dimiya.studentinquiry.domain.inquiry.controller;
 import com.dimiya.studentinquiry.domain.inquiry.dto.LecturerInquiryViewResponse;
 import com.dimiya.studentinquiry.domain.inquiry.entity.InquiryItem;
 import com.dimiya.studentinquiry.domain.inquiry.service.InquiryService;
+
 import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

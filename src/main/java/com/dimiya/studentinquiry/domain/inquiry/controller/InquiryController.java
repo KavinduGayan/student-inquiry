@@ -7,7 +7,6 @@ import com.dimiya.studentinquiry.domain.inquiry.entity.Inquiry;
 import com.dimiya.studentinquiry.domain.inquiry.entity.InquiryItem;
 import com.dimiya.studentinquiry.domain.inquiry.repo.InquiryItemRepository;
 import com.dimiya.studentinquiry.domain.inquiry.service.InquiryService;
-import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -29,7 +28,7 @@ public class InquiryController {
     }
 
     @PostMapping
-    public ResponseEntity<CreateInquiryResponse> create(@Valid @RequestBody CreateInquiryRequest request) {
+    public ResponseEntity<CreateInquiryResponse> create(@RequestBody CreateInquiryRequest request) {
         Inquiry inquiry = inquiryService.createInquiry(request);
 
         // fetch items for this inquiry (simple approach)

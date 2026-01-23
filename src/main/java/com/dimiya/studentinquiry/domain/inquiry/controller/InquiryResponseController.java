@@ -2,7 +2,6 @@ package com.dimiya.studentinquiry.domain.inquiry.controller;
 
 import com.dimiya.studentinquiry.domain.inquiry.dto.AddInquiryResponseRequest;
 import com.dimiya.studentinquiry.domain.inquiry.service.InquiryResponseService;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +19,7 @@ public class InquiryResponseController {
     @PostMapping("/{inquiryItemId}/responses")
     public ResponseEntity<Void> addResponse(
             @PathVariable Long inquiryItemId,
-            @Valid @RequestBody AddInquiryResponseRequest request
+            @RequestBody AddInquiryResponseRequest request
     ) {
         inquiryResponseService.addResponse(inquiryItemId, request);
         return ResponseEntity.status(HttpStatus.CREATED).build();

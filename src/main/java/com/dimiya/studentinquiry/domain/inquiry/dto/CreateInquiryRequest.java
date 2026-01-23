@@ -1,17 +1,13 @@
 package com.dimiya.studentinquiry.domain.inquiry.dto;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+
 import java.util.List;
 
 public class CreateInquiryRequest {
 
-    @NotNull
+
     private Long studentId;
 
-    @NotEmpty
-    @Valid
     private List<InquiryItemRequest> items;
 
     public Long getStudentId() {

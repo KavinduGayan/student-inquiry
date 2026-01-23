@@ -1,6 +1,4 @@
 package com.dimiya.studentinquiry.domain.inquiry.dto;
-
-
 import java.time.LocalDateTime;
 
 public class LecturerInquiryViewResponse {

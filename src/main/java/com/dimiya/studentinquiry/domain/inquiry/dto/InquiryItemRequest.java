@@ -1,13 +1,10 @@
 package com.dimiya.studentinquiry.domain.inquiry.dto;
 
-import jakarta.validation.constraints.NotNull;
 
 public class InquiryItemRequest {
 
-    @NotNull
     private Long courseId;
 
-    @NotNull
     private Long lecturerId;
 
     public Long getCourseId() {

@@ -2,8 +2,9 @@ package com.dimiya.studentinquiry.domain.lecturer.controller;
 
 import com.dimiya.studentinquiry.domain.lecturer.entity.Lecturer;
 import com.dimiya.studentinquiry.domain.lecturer.service.LecturerService;
-import jakarta.validation.Valid;
+
 import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class LecturerController {
     }
 
     @PostMapping
-    public ResponseEntity<Lecturer> create(@Valid @RequestBody Lecturer lecturer) {
+    public ResponseEntity<Lecturer> create(@RequestBody Lecturer lecturer) {
         Lecturer saved = lecturerService.create(lecturer);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
