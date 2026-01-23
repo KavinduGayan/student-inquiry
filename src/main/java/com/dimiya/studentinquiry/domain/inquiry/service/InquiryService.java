@@ -81,6 +81,7 @@ public class InquiryService {
         return inquiry;
     }
 
+    @Transactional(readOnly = true)
     public Page<InquiryItem> getLecturerInquiries(Long lecturerId, Pageable pageable) {
         return inquiryItemRepository.findByLecturerIdOrderByInquiredAtDesc(lecturerId, pageable);
     }
