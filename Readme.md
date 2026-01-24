@@ -62,7 +62,7 @@ Base path: `/api/v1`
 
 ## Database
 
-The application uses an in-memory H2 database configured at startup. Data is not persisted between restarts.
+The application uses an in-memory H2 database configured at startup. Data is persisted between restarts (Student, Course and Lecture).
 
 ## Tests
 
