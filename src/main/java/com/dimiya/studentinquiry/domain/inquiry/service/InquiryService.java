@@ -17,6 +17,8 @@ import com.dimiya.studentinquiry.exception.ResourceNotFoundException;
 
 import java.time.LocalDateTime;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -25,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class InquiryService {
+
+    private static final Logger log = LoggerFactory.getLogger(InquiryService.class);
 
     private final InquiryRepository inquiryRepository;
     private final InquiryItemRepository inquiryItemRepository;
@@ -48,9 +52,16 @@ public class InquiryService {
 
     @Transactional
     public Inquiry createInquiry(CreateInquiryRequest request) {
+        Long studentId = request.getStudentId();
+        int itemCount = request.getItems() == null ? 0 : request.getItems().size();
 
-        Student student = studentRepository.findById(request.getStudentId())
-                .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
+        log.info("Creating inquiry: studentId={}, itemCount={}", studentId, itemCount);
+
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> {
+                    log.warn("Student not found: studentId={}", studentId);
+                    return new ResourceNotFoundException("Student not found: " + studentId);
+                });
 
         Inquiry inquiry = Inquiry.builder()
                 .student(student)
@@ -58,14 +69,33 @@ public class InquiryService {
                 .build();
 
         inquiry = inquiryRepository.save(inquiry);
+        log.info("Inquiry created: inquiryId={}, studentId={}", inquiry.getId(), studentId);
+
+        if (request.getItems() == null || request.getItems().isEmpty()) {
+            log.warn("Inquiry created with no items: inquiryId={}, studentId={}", inquiry.getId(), studentId);
+            return inquiry;
+        }
+
+        int savedItems = 0;
 
         for (var itemReq : request.getItems()) {
+            Long courseId = itemReq.getCourseId();
+            Long lecturerId = itemReq.getLecturerId();
 
-            Course course = courseRepository.findById(itemReq.getCourseId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
+            log.debug("Creating inquiry item: inquiryId={}, courseId={}, lecturerId={}",
+                    inquiry.getId(), courseId, lecturerId);
 
-            Lecturer lecturer = lecturerRepository.findById(itemReq.getLecturerId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Lecturer not found"));
+            Course course = courseRepository.findById(courseId)
+                    .orElseThrow(() -> {
+                        log.warn("Course not found: courseId={}", courseId);
+                        return new ResourceNotFoundException("Course not found: " + courseId);
+                    });
+
+            Lecturer lecturer = lecturerRepository.findById(lecturerId)
+                    .orElseThrow(() -> {
+                        log.warn("Lecturer not found: lecturerId={}", lecturerId);
+                        return new ResourceNotFoundException("Lecturer not found: " + lecturerId);
+                    });
 
             InquiryItem item = InquiryItem.builder()
                     .inquiry(inquiry)
@@ -75,14 +105,32 @@ public class InquiryService {
                     .status(InquiryStatus.OPEN)
                     .build();
 
-            inquiryItemRepository.save(item);
+            InquiryItem saved = inquiryItemRepository.save(item);
+            savedItems++;
+
+            log.info("Inquiry item created: inquiryItemId={}, inquiryId={}, lecturerId={}, courseId={}, status={}",
+                    saved.getId(), inquiry.getId(), lecturerId, courseId, saved.getStatus());
         }
+
+        log.info("Inquiry creation completed: inquiryId={}, studentId={}, itemsSaved={}",
+                inquiry.getId(), studentId, savedItems);
 
         return inquiry;
     }
 
     @Transactional(readOnly = true)
     public Page<InquiryItem> getLecturerInquiries(Long lecturerId, Pageable pageable) {
-        return inquiryItemRepository.findByLecturerIdOrderByInquiredAtDesc(lecturerId, pageable);
+        log.info("Fetching lecturer inquiries: lecturerId={}, page={}, size={}, sort={}",
+                lecturerId,
+                pageable == null ? null : pageable.getPageNumber(),
+                pageable == null ? null : pageable.getPageSize(),
+                pageable == null ? null : pageable.getSort());
+
+        Page<InquiryItem> page = inquiryItemRepository.findByLecturerIdOrderByInquiredAtDesc(lecturerId, pageable);
+
+        log.info("Lecturer inquiries fetched: lecturerId={}, returned={}, totalElements={}",
+                lecturerId, page.getNumberOfElements(), page.getTotalElements());
+
+        return page;
     }
 }

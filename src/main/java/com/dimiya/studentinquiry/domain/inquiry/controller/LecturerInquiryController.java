@@ -4,6 +4,8 @@ import com.dimiya.studentinquiry.domain.inquiry.dto.LecturerInquiryViewResponse;
 import com.dimiya.studentinquiry.domain.inquiry.entity.InquiryItem;
 import com.dimiya.studentinquiry.domain.inquiry.service.InquiryService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/lecturers")
 public class LecturerInquiryController {
+
+    private static final Logger log = LoggerFactory.getLogger(LecturerInquiryController.class);
 
     private final InquiryService inquiryService;
 
@@ -24,6 +28,13 @@ public class LecturerInquiryController {
             @PathVariable Long lecturerId,
             Pageable pageable
     ) {
+        log.info(
+                "Fetch lecturer inquiries request received lecturerId={} page={} size={}",
+                lecturerId,
+                pageable.getPageNumber(),
+                pageable.getPageSize()
+        );
+
         Page<InquiryItem> items = inquiryService.getLecturerInquiries(lecturerId, pageable);
 
         Page<LecturerInquiryViewResponse> response = items.map(ii -> {
@@ -35,6 +46,14 @@ public class LecturerInquiryController {
             r.setStatus(ii.getStatus() != null ? ii.getStatus().name() : null);
             return r;
         });
+
+        log.info(
+                "Fetched lecturer inquiries lecturerId={} totalElements={} totalPages={}",
+                lecturerId,
+                response.getTotalElements(),
+                response.getTotalPages()
+        );
+
         return ResponseEntity.ok(response);
     }
 

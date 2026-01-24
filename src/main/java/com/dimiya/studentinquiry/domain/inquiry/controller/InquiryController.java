@@ -11,6 +11,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/inquiries")
 public class InquiryController {
+
+    private static final Logger log = LoggerFactory.getLogger(InquiryController.class);
 
     private final InquiryService inquiryService;
     private final InquiryItemRepository inquiryItemRepository;
@@ -29,13 +34,17 @@ public class InquiryController {
 
     @PostMapping
     public ResponseEntity<CreateInquiryResponse> create(@RequestBody CreateInquiryRequest request) {
+        int itemCount = request.getItems() == null ? 0 : request.getItems().size();
+        log.info("Create inquiry request received studentId={} itemCount={}", request.getStudentId(), itemCount);
+        log.debug("Create inquiry payload items={}", request.getItems());
+
         Inquiry inquiry = inquiryService.createInquiry(request);
 
         // fetch items for this inquiry (simple approach)
         List<InquiryItem> items = inquiryItemRepository.findAll()
                 .stream()
                 .filter(ii -> ii.getInquiry().getId().equals(inquiry.getId()))
-                .collect(Collectors.toList());
+                .toList();
 
         CreateInquiryResponse response = new CreateInquiryResponse();
         response.setInquiryId(inquiry.getId());
@@ -43,6 +52,7 @@ public class InquiryController {
         response.setCreatedAt(inquiry.getCreatedAt());
         response.setItems(items.stream().map(this::toInquiryView).toList());
 
+        log.info("Inquiry created inquiryId={} responseItemCount={}", inquiry.getId(), response.getItems().size());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
