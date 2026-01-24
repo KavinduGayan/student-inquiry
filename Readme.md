@@ -27,10 +27,22 @@ The service starts on `http://localhost:8080`.
 ### Run with Docker
 
 ```bash
-docker compose -f docker/docker-compose.yml up --build
+docker compose up --build
 ```
 
 The service starts on `http://localhost:8080`.
+
+To run it in the background:
+
+```bash
+docker compose up --build -d
+```
+
+To stop the containers:
+
+```bash
+docker compose down
+```
 
 ### API documentation
 
