@@ -60,6 +60,14 @@ Base path: `/api/v1`
 - Lecturer inquiries: `GET /lecturers/{lecturerId}/inquiries`
 - Inquiry responses: `POST /inquiry-items/{inquiryItemId}/responses`
 
+## Flow diagrams (PlantUML)
+
+PlantUML flow diagrams for the main inquiry workflows live in `docs/flow-diagrams.puml`.
+
+```bash
+plantuml docs/flow-diagrams.puml
+```
+
 ## Database
 
 The application uses an in-memory H2 database configured at startup. Data is persisted between restarts (Student, Course and Lecture).

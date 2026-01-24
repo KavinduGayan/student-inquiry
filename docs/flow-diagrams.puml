@@ -1,0 +1,81 @@
+@startuml create-inquiry-flow
+skinparam backgroundColor transparent
+skinparam shadowing false
+title Create Inquiry Flow (/api/v1/inquiries)
+
+start
+:POST /api/v1/inquiries;
+:InquiryController.create(request);
+:InquiryService.createInquiry(request);
+
+if (Student exists?) then (yes)
+  :Persist Inquiry;
+  if (Items present?) then (yes)
+    repeat
+      :Load Course;
+      :Load Lecturer;
+      :Persist InquiryItem\nstatus = OPEN;
+    repeat while (More items?) is (yes)
+  else (no)
+    :Return inquiry without items;
+  endif
+  :Build CreateInquiryResponse;
+  :201 CREATED;
+  stop
+else (no)
+  :ResourceNotFoundException;
+  :Handled by GlobalExceptionHandler;
+  stop
+endif
+@enduml
+
+@startuml add-inquiry-response-flow
+skinparam backgroundColor transparent
+skinparam shadowing false
+title Add Inquiry Response Flow (/api/v1/inquiry-items/{id}/responses)
+
+start
+:POST /api/v1/inquiry-items/{id}/responses;
+:InquiryResponseController.addResponse(...);
+:InquiryResponseService.addResponse(...);
+
+:Load InquiryItem;
+if (InquiryItem exists?) then (yes)
+  :Load Lecturer;
+  if (Lecturer exists?) then (yes)
+    if (Lecturer assigned to item?) then (yes)
+      :Persist InquiryResponse;
+      :Update InquiryItem status\nOPEN -> RESPONDED;
+      :201 CREATED;
+      stop
+    else (no)
+      :BadRequestException;
+      :Handled by GlobalExceptionHandler;
+      stop
+    endif
+  else (no)
+    :ResourceNotFoundException;
+    :Handled by GlobalExceptionHandler;
+    stop
+  endif
+else (no)
+  :ResourceNotFoundException;
+  :Handled by GlobalExceptionHandler;
+  stop
+endif
+@enduml
+
+@startuml lecturer-inquiries-flow
+skinparam backgroundColor transparent
+skinparam shadowing false
+title Lecturer Inquiries Flow (/api/v1/lecturers/{lecturerId}/inquiries)
+
+start
+:GET /api/v1/lecturers/{lecturerId}/inquiries;
+:LecturerInquiryController.getLecturerInquiries(...);
+:InquiryService.getLecturerInquiries(...);
+:InquiryItemRepository.findByLecturerIdOrderByInquiredAtDesc(...);
+:Map InquiryItems to LecturerInquiryViewResponse;
+:200 OK (paged response);
+stop
+@enduml
