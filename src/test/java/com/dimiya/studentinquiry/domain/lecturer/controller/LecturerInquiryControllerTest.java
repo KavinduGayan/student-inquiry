@@ -56,7 +56,7 @@ class LecturerInquiryControllerTest {
 
     @Test
     void getLecturerInquiries() throws Exception {
-        Student student = studentRepository.save(Student.builder().name("Alice").build());
+        Student student = studentRepository.save(Student.builder().name("Alice").email("alice@example.com").build());
         Course course = courseRepository.save(Course.builder().courseCode("BIO101").name("Biology").build());
         Lecturer lecturer = lecturerRepository.save(Lecturer.builder()
                 .lecturerCode("LEC100")

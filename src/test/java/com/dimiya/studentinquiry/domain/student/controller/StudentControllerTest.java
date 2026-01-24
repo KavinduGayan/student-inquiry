@@ -45,7 +45,7 @@ class StudentControllerTest {
 
     @Test
     void createStudent() throws Exception {
-        Map<String, Object> payload = Map.of("name", "Alice");
+        Map<String, Object> payload = Map.of("name", "Alice",  "email", "alice@test.com");
 
         mockMvc.perform(post("/api/v1/students")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -57,7 +57,7 @@ class StudentControllerTest {
 
     @Test
     void getStudentById() throws Exception {
-        Student student = studentRepository.save(Student.builder().name("Bob").build());
+        Student student = studentRepository.save(Student.builder().name("Bob").email("alice@test.com").build());
 
         mockMvc.perform(get("/api/v1/students/{id}", student.getId()))
                 .andExpect(status().isOk())
@@ -67,8 +67,8 @@ class StudentControllerTest {
 
     @Test
     void getAllStudents() throws Exception {
-        studentRepository.save(Student.builder().name("Alice").build());
-        studentRepository.save(Student.builder().name("Bob").build());
+        studentRepository.save(Student.builder().name("Alice").email("alice@test.com").build());
+        studentRepository.save(Student.builder().name("Bob").email("bob@test.com").build());
 
         mockMvc.perform(get("/api/v1/students"))
                 .andExpect(status().isOk())
