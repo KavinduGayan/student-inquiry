@@ -24,6 +24,14 @@ Spring Boot service for managing students, lecturers, courses, and inquiries, wi
 
 The service starts on `http://localhost:8080`.
 
+### Run with Docker
+
+```bash
+docker compose -f docker/docker-compose.yml up --build
+```
+
+The service starts on `http://localhost:8080`.
+
 ### API documentation
 
 - OpenAPI JSON: `http://localhost:8080/v3/api-docs`
