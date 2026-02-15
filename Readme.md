@@ -77,3 +77,14 @@ The application uses an in-memory H2 database configured at startup. Data is per
 ```bash
 ./mvnw test
 ```
+
+## CI/CD
+This project uses Continuous Integration and Continuous Deployment (CI/CD) to ensure that changes are automatically tested and deployed. Here's a brief overview of the CI/CD setup:
+
+### Continuous Integration
+- Automated tests are run on every push to the main branch using GitHub Actions.
+- Code quality checks are performed with ESLint.
+
+### Continuous Deployment
+- The application is automatically deployed to the production server after successful tests.
+- Rollbacks are automated in case of deployment failure.
