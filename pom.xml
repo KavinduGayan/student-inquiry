@@ -26,6 +26,13 @@
         <tag/>
         <url/>
     </scm>
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/kavindu93/student-inquiry</url>
+        </repository>
+    </distributionManagement>
     <properties>
         <java.version>21</java.version>
     </properties>
@@ -86,6 +93,7 @@
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
